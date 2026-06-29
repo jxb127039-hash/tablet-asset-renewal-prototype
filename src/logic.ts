@@ -1,4 +1,4 @@
-import type { CartItem, PurchasedAsset, ResaleQuote, UpgradePlan } from "./types";
+import type { CartItem, PurchasedAsset, UpgradePlan } from "./types";
 
 export function formatMoney(value: number) {
   return new Intl.NumberFormat("zh-CN", { maximumFractionDigits: 0 }).format(value);
@@ -26,24 +26,31 @@ export function shouldShowContextRecommendation(cart: CartItem[], assets: Purcha
 
 export function calculateUpgradePlan(
   cart: CartItem[],
-  asset: PurchasedAsset,
-  quote: ResaleQuote,
+  assets: PurchasedAsset[],
+  tradeInBonus = 200,
 ): UpgradePlan {
   const tablet = cart.find((item) => item.selected && item.category === "tablet");
   if (!tablet) throw new Error("购物车中没有已选中的平板");
+  if (!assets.length) throw new Error("至少选择一件旧资产");
   const cartTotal = cart
     .filter((item) => item.selected)
     .reduce((sum, item) => sum + item.price * item.quantity, 0);
   const accessoryTotal = Math.max(0, cartTotal - tablet.price * tablet.quantity);
-  const currentOffset = Math.min(cartTotal, quote.estimateMax + quote.tradeInBonus);
-  const delayLoss90 = Math.max(0, quote.estimateMax - quote.forecast90);
+  const assetValueToday = assets.reduce((sum, asset) => sum + asset.estimateMax, 0);
+  const assetValue90 = assets.reduce((sum, asset) => sum + asset.forecast90, 0);
+  const currentOffset = Math.min(cartTotal, assetValueToday + tradeInBonus);
+  const delayLoss90 = Math.max(0, assetValueToday - assetValue90);
   const netTabletToday = Math.max(0, tablet.price - currentOffset);
   return {
-    assetId: asset.id,
+    assetIds: assets.map((asset) => asset.id),
+    selectedAssetCount: assets.length,
     cartItemId: tablet.id,
     tabletPrice: tablet.price,
     accessoryTotal,
     cartTotal,
+    assetValueToday,
+    assetValue90,
+    tradeInBonus,
     currentOffset,
     netTabletToday,
     cartPayableToday: Math.max(0, cartTotal - currentOffset),

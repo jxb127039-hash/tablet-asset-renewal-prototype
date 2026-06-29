@@ -1,26 +1,26 @@
 # Design QA
 
 - source visual truth: `design/selected-reference.png`
-- implementation screenshots: `qa/cart-390x844.png`, `qa/cart-recommendation-390x844.png`, `qa/plan-full.png`
+- implementation screenshots: `qa/cart-390x844.png`, `qa/assets-390x844.png`, `qa/assets-multiselect-390x844.png`, `qa/plan-multiasset-390x844.png`
 - combined comparison evidence: `qa/design-comparison.png`
 - viewport: 390 × 844, Chrome
-- state: shopping cart recommendation before old-device trade-in is applied
+- state: shopping cart recommendation, unselected asset center, four-asset selection, and combined renewal plan
 
 ## Full-view comparison evidence
 
-The implementation preserves the selected Option 3 structure: high-value 3C cart rows, a lightweight purchased-assets entry, an expanded trade-in decision section, and a fixed checkout action. The current implementation is intentionally in the unselected recommendation state; the source mock showed the old device already applied, which was superseded by the confirmed product rule that checkout payable must not change before explicit consent.
+The implementation preserves the selected Option 3 structure: high-value 3C cart rows, a lightweight purchased-assets entry, an expanded trade-in decision section, and a fixed checkout action. Assets are intentionally unselected on entry. The asset center now supports tablet, phone, and earbuds selection, then clearly changes the combined offset from ¥0 to ¥3,800 only after explicit selection.
 
 ## Focused-region comparison evidence
 
-`qa/cart-recommendation-390x844.png` was inspected against the trade-in panel in the source. A focused comparison was required because the full page is scrollable and the fixed checkout bar represents the actual mobile viewport behavior. The focused region confirms that current value, bonus, today cost, 90-day comparison, and primary action remain readable without overlap.
+`qa/assets-390x844.png` and `qa/assets-multiselect-390x844.png` confirm that product images, residual-value curves, selection state, one-time bonus, and fixed next-step action remain readable without overlap. `qa/plan-multiasset-390x844.png` confirms that current recovery value and the 90-day expected loss are separated into different decision surfaces.
 
 ## Required fidelity surfaces
 
 - Fonts and typography: system Chinese UI stack matches the source's compact commerce treatment; heading, price, secondary text, and disclaimer weights remain distinct without truncation.
 - Spacing and layout rhythm: 390 px frame, 14 px page gutters, grouped white surfaces, lightweight dividers, and restrained radii track the source. The implementation adds a required cart title and explanatory copy but keeps the same hierarchy.
 - Colors and visual tokens: neutral gray page, white surfaces, commerce red actions, green current deductions, and neutral future-risk copy are consistent. Future depreciation is deliberately not green and is never shown as a discount.
-- Image quality and asset fidelity: three generated product assets are installed at appropriate product-image sizes with clean white backgrounds and consistent iQOO art direction. No CSS drawings, inline SVG substitutes, emojis, or placeholders replace product imagery.
-- Copy and content: all product-specific text uses iQOO tablets. The distinction between current discount and future estimated loss is explicit, and all values reconcile to the documented formulas.
+- Image quality and asset fidelity: generated tablet, phone, and earbuds assets are installed at appropriate product-image sizes with clean white backgrounds and a consistent 3C catalog art direction. No placeholders remain.
+- Copy and content: the target product remains iQOO Pad6 Pro, while historical assets span iQOO/vivo tablets, phone, and earbuds. Every value curve labels today and 90-day estimates. The expected depreciation is never included in today's discount, and all values reconcile to the documented formulas.
 - Icons and controls: Ant Design icons are used consistently; cart selection, quantity, navigation, upload, reminder, success, and export controls are interactive.
 - Responsiveness and accessibility: verified at 390 × 844 and below 370 px; no horizontal overflow. Main controls are semantic buttons, images have alt text, forms are labelled, focus-visible styling is present, and the complete core flow is keyboard-addressable.
 
@@ -35,6 +35,9 @@ No actionable P0, P1, or P2 findings remain.
 - Kept the old device unselected until the user confirms, while preserving the selected state after confirmation.
 - Separated tablet net upgrade cost from cart payable including accessories.
 - Replaced Apple products with generated iQOO Pad6 Pro, iQOO keyboard, and iQOO Pad2 Pro assets.
+- Added cross-category multi-select with generated iQOO phone and vivo earbuds imagery.
+- Added per-asset today/30/60/90-day residual-value curves and explicit non-discount copy.
+- Kept the renewal bonus to one application per order while summing all selected asset estimates.
 
 ## Follow-up polish
 

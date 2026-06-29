@@ -10,6 +10,6 @@ describe("cart experience", () => {
     render(<MemoryRouter initialEntries={["/cart"]}><App /></MemoryRouter>);
     expect(screen.getByText("尚未应用旧机抵扣")).toBeInTheDocument();
     expect(screen.getByText("90天预计少值仅用于时机比较，不计入今天优惠。")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "测算并抵扣" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "选择资产并测算" })).toBeInTheDocument();
   });
 });

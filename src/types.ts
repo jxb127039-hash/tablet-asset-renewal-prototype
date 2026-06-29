@@ -3,7 +3,7 @@ export type ConditionLevel = "excellent" | "good" | "fair";
 
 export type PurchasedAsset = {
   id: string;
-  category: "tablet";
+  category: "tablet" | "phone" | "earbuds";
   brand: string;
   model: string;
   storage: string;
@@ -14,8 +14,10 @@ export type PurchasedAsset = {
   ecosystem: string;
   estimateMin: number;
   estimateMax: number;
+  forecast30: number;
+  forecast60: number;
   forecast90: number;
-  image?: string;
+  image: string;
 };
 
 export type CartItem = {
@@ -38,23 +40,16 @@ export type ConditionAssessment = {
   photoName?: string;
 };
 
-export type ResaleQuote = {
-  assetId: string;
-  estimateMin: number;
-  estimateMax: number;
-  forecast30: number;
-  forecast90: number;
-  tradeInBonus: number;
-  confidence: "medium" | "high";
-  asOf: string;
-};
-
 export type UpgradePlan = {
-  assetId: string;
+  assetIds: string[];
+  selectedAssetCount: number;
   cartItemId: string;
   tabletPrice: number;
   accessoryTotal: number;
   cartTotal: number;
+  assetValueToday: number;
+  assetValue90: number;
+  tradeInBonus: number;
   currentOffset: number;
   netTabletToday: number;
   cartPayableToday: number;
@@ -66,6 +61,7 @@ export type PrototypeEventName =
   | "cart_asset_entry_impression"
   | "context_recommendation_impression"
   | "asset_entry_clicked"
+  | "asset_selection_changed"
   | "diagnosis_started"
   | "diagnosis_completed"
   | "reminder_set"

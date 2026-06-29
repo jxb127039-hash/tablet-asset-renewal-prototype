@@ -186,11 +186,56 @@ button:focus-visible, input:focus-visible, label:focus-within { outline: 3px sol
 .asset-list-value { text-align: right; }
 .asset-list-value strong { display: block; font-size: 12px; margin-bottom: 8px; }
 
+.multi-select-tip { display: flex; align-items: flex-start; gap: 9px; margin: 12px 2px 0; padding: 11px 12px; border-radius: 12px; background: #fff7f6; color: #686c75; font-size: 11px; line-height: 1.5; }
+.multi-select-tip > .anticon { color: var(--red); margin-top: 2px; }
+.multi-select-tip strong { display: block; color: #303239; font-size: 12px; }
+.asset-card-list { display: grid; gap: 12px; margin-top: 12px; }
+.asset-card { background: #fff; border: 1.5px solid transparent; border-radius: 18px; padding: 14px; box-shadow: 0 8px 24px rgba(28,35,53,.035); transition: border-color .18s ease, box-shadow .18s ease; }
+.asset-card.selected { border-color: #ffaaa4; box-shadow: 0 8px 24px rgba(233,52,43,.07); }
+.asset-card-main { display: grid; grid-template-columns: 32px 78px 1fr; gap: 9px; align-items: center; }
+.asset-card-main > img { width: 78px; height: 78px; object-fit: contain; mix-blend-mode: multiply; }
+.asset-card-copy strong, .asset-card-copy span, .asset-card-copy small { display: block; }
+.asset-card-copy strong { font-size: 15px; }
+.asset-card-copy span { color: #747882; font-size: 10px; margin: 5px 0; }
+.asset-card-copy small { color: #8a8d96; font-size: 9px; line-height: 1.4; }
+.asset-card-value { grid-column: 2 / 4; display: flex; justify-content: space-between; align-items: baseline; padding-top: 7px; }
+.asset-card-value span { color: #777b84; font-size: 10px; }
+.asset-card-value strong { color: var(--red); font-size: 15px; }
+.asset-curve { border-top: 1px solid var(--line); margin-top: 11px; padding-top: 10px; }
+.curve-heading { display: flex; justify-content: space-between; align-items: center; }
+.curve-heading span { color: #565a63; font-size: 11px; }
+.curve-heading strong { color: #2f3238; font-size: 11px; }
+.curve-chart { width: 100%; height: 94px; margin-top: 4px; }
+.curve-chart svg { width: 100%; height: 100%; overflow: visible; }
+.curve-grid { stroke: #eceef2; stroke-width: 1; stroke-dasharray: 3 3; }
+.curve-line { fill: none; stroke: var(--red); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.curve-dot { fill: #fff; stroke: var(--red); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.curve-chart text { fill: #898d96; font-size: 9px; }
+.curve-values { display: flex; justify-content: space-between; color: #7a7e87; font-size: 9px; }
+.curve-values strong { color: #50545d; font-weight: 600; }
+.asset-curve > p { margin: 2px 0 0; text-align: center; color: #979aa2; font-size: 9px; }
+.asset-selection-bar { width: min(390px, 100%); position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); min-height: 82px; z-index: 30; display: grid; grid-template-columns: 1fr 118px; gap: 10px; align-items: center; padding: 12px 14px calc(12px + env(safe-area-inset-bottom)); background: rgba(255,255,255,.97); box-shadow: 0 -8px 26px rgba(35,40,52,.09); backdrop-filter: blur(18px); }
+.asset-selection-bar span, .asset-selection-bar strong { display: block; }
+.asset-selection-bar span { color: #6e727b; font-size: 11px; }
+.asset-selection-bar strong { color: var(--red); font-size: 17px; margin-top: 3px; }
+.asset-selection-bar button:disabled { opacity: .45; cursor: not-allowed; }
+.asset-stack { width: 70px; height: 70px; display: flex; align-items: center; overflow: visible; }
+.suggested-asset .asset-stack img { width: 48px; height: 62px; object-fit: contain; mix-blend-mode: multiply; background: #fff; border-radius: 7px; box-shadow: 0 2px 7px rgba(23,27,35,.08); }
+.suggested-asset .asset-stack img + img { margin-left: -28px; }
+
 .diagnosis-device { display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 20px; padding: 16px; }
 .diagnosis-device img { width: 100px; height: 100px; object-fit: contain; mix-blend-mode: multiply; }
 .diagnosis-device span { color: var(--red); font-size: 10px; }
 .diagnosis-device h2 { margin: 5px 0; font-size: 19px; }
 .diagnosis-device p { margin: 0; color: var(--muted); font-size: 12px; }
+.diagnosis-assets { display: block; }
+.diagnosis-assets-heading span { color: var(--red); font-size: 10px; }
+.diagnosis-assets-heading h2 { margin: 5px 0; font-size: 19px; }
+.diagnosis-assets-heading p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.diagnosis-assets-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-top: 13px; }
+.diagnosis-assets-list div { min-width: 0; padding: 7px 5px; text-align: center; border-radius: 10px; background: #f7f7f8; }
+.diagnosis-assets-list img { width: 64px; height: 54px; object-fit: contain; mix-blend-mode: multiply; }
+.diagnosis-assets-list span { display: block; color: #464a52; font-size: 9px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .form-section { padding: 17px 16px; }
 .section-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .section-title > div { display: flex; align-items: center; gap: 8px; }
@@ -231,6 +276,13 @@ button:focus-visible, input:focus-visible, label:focus-within { outline: 3px sol
 .decision-column small { color: #8b8e96; font-size: 9px; }
 .decision-column i { color: var(--red); font-size: 9px; margin-top: 10px; }
 .decision-column i.neutral { color: #626771; }
+.selected-assets-summary { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 12px; padding: 13px 15px; background: #fff; border-radius: 15px; }
+.selected-assets-summary span, .selected-assets-summary strong { display: block; }
+.selected-assets-summary span { color: #777b84; font-size: 10px; }
+.selected-assets-summary strong { font-size: 13px; margin-top: 4px; }
+.selected-assets-images { display: flex; align-items: center; }
+.selected-assets-images img { width: 46px; height: 46px; object-fit: contain; mix-blend-mode: multiply; background: #fff; border-radius: 8px; box-shadow: 0 2px 7px rgba(23,27,35,.08); }
+.selected-assets-images img + img { margin-left: -14px; }
 .decision-section { padding: 18px 16px; }
 .decision-section h2 { margin: 0 0 12px; font-size: 16px; }
 .formula-caveat { margin-bottom: 0; }
@@ -239,6 +291,8 @@ button:focus-visible, input:focus-visible, label:focus-within { outline: 3px sol
 .reasons strong { display: block; color: #24262b; font-size: 12px; margin-bottom: 2px; }
 .reminder-button { width: 100%; border: 0; color: #4e535c; background: transparent; margin-top: 7px; }
 .reminder-button:disabled { color: var(--green); }
+.empty-decision { text-align: center; }
+.empty-decision p { color: var(--muted); font-size: 12px; line-height: 1.6; }
 
 .success-card { padding: 28px 20px; text-align: center; }
 .success-icon { color: var(--green); font-size: 52px; }

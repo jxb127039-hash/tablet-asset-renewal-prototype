@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Shell } from "../components/Shell";
 import { purchasedAssets } from "../data";
 import { recordEvent } from "../events";
+import { getSelectedAssetIds } from "../store";
 import type { ConditionLevel } from "../types";
 
 const choices: { value: ConditionLevel; label: string; hint: string }[] = [
@@ -14,7 +15,8 @@ const choices: { value: ConditionLevel; label: string; hint: string }[] = [
 
 export function DiagnosisPage() {
   const navigate = useNavigate();
-  const asset = purchasedAssets[0];
+  const selectedIds = getSelectedAssetIds();
+  const assets = purchasedAssets.filter((asset) => selectedIds.includes(asset.id));
   const [condition, setCondition] = useState<ConditionLevel>("good");
   const [photoUrl, setPhotoUrl] = useState<string>();
   const [photoName, setPhotoName] = useState("");
@@ -30,22 +32,26 @@ export function DiagnosisPage() {
 
   const analyze = () => {
     setAnalyzing(true);
-    recordEvent("diagnosis_started", { assetId: asset.id });
+    recordEvent("diagnosis_started", { assetId: selectedIds.join(",") });
     window.setTimeout(() => {
-      recordEvent("diagnosis_completed", { assetId: asset.id });
+      recordEvent("diagnosis_completed", { assetId: selectedIds.join(",") });
       navigate("/plan");
     }, 800);
   };
 
   return (
-    <Shell title="确认旧机状态" back>
-      <section className="diagnosis-device">
-        <img src={asset.image} alt={asset.model} />
-        <div><span>已从历史订单带入</span><h2>{asset.model}</h2><p>{asset.color}｜{asset.storage}</p></div>
+    <Shell title="确认3C资产状态" back>
+      <section className="diagnosis-device diagnosis-assets">
+        <div className="diagnosis-assets-heading"><span>已从历史订单带入</span><h2>确认 {assets.length} 件3C资产</h2><p>每件资产将单独验机，当前先使用订单信息完成组合测算。</p></div>
+        <div className="diagnosis-assets-list">
+          {assets.map((asset) => (
+            <div key={asset.id}><img src={asset.image} alt={asset.model} /><span>{asset.model}</span></div>
+          ))}
+        </div>
       </section>
 
       <section className="form-section">
-        <div className="section-title"><div><span>1</span><h2>确认外观状态</h2></div><small>影响估值区间</small></div>
+        <div className="section-title"><div><span>1</span><h2>确认整体状态</h2></div><small>逐台验机前预估</small></div>
         <div className="condition-grid">
           {choices.map((choice) => (
             <button
@@ -64,21 +70,21 @@ export function DiagnosisPage() {
         <div className="section-title"><div><span>2</span><h2>上传设备照片</h2></div><small>仅本地预览</small></div>
         <label className={photoUrl ? "photo-upload has-photo" : "photo-upload"}>
           {photoUrl ? <img src={photoUrl} alt="待估设备预览" /> : <CameraOutlined />}
-          <span>{photoName || "拍摄正面和背面，辅助模拟识别"}</span>
+          <span>{photoName || `上传任一设备照片，辅助${assets.length}件组合测算`}</span>
           <input type="file" accept="image/*" onChange={handlePhoto} />
         </label>
         <p className="privacy-copy"><SafetyCertificateOutlined /> 照片不会上传，演示识别结果由固定样例生成。</p>
       </section>
 
       <section className="checklist-card">
-        <h2>订单信息已自动完成</h2>
-        <div><CheckCircleFilled /> 型号、容量和颜色</div>
-        <div><CheckCircleFilled /> 购买时间与成交价格</div>
+        <h2>{assets.length}件资产订单信息已自动完成</h2>
+        <div><CheckCircleFilled /> 每台设备的型号、容量和颜色</div>
+        <div><CheckCircleFilled /> 每台设备的购买时间与成交价格</div>
         <div><CheckCircleFilled /> 对应购物车新平板</div>
       </section>
 
       <button className="primary-button full" disabled={analyzing} onClick={analyze}>
-        {analyzing ? <><LoadingOutlined spin /> AI诊断中…</> : "生成换新决策"}
+        {analyzing ? <><LoadingOutlined spin /> AI诊断中…</> : `生成${assets.length}件资产组合换新决策`}
       </button>
     </Shell>
   );

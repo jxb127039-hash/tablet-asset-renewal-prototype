@@ -1,32 +1,44 @@
 import { CheckOutlined, ClockCircleOutlined, RightOutlined, SafetyCertificateOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { demoQuote, purchasedAssets } from "../data";
 import { formatMoney } from "../logic";
-import type { UpgradePlan } from "../types";
+import type { PurchasedAsset, UpgradePlan } from "../types";
 
-export function RenewalRecommendation({ applied, plan, onRemove }: { applied: boolean; plan: UpgradePlan; onRemove: () => void }) {
+export function RenewalRecommendation({
+  applied,
+  plan,
+  selectedAssets,
+  hasSelection,
+  onRemove,
+}: {
+  applied: boolean;
+  plan: UpgradePlan;
+  selectedAssets: PurchasedAsset[];
+  hasSelection: boolean;
+  onRemove: () => void;
+}) {
   const navigate = useNavigate();
-  const asset = purchasedAssets[0];
   return (
     <section className={applied ? "renewal-panel applied" : "renewal-panel"} aria-labelledby="renewal-title">
       <div className="renewal-heading">
         <div>
           <span className="eyebrow">智能换新建议</span>
-          <h2 id="renewal-title">历史订单已匹配旧平板</h2>
+          <h2 id="renewal-title">{hasSelection ? `已选${selectedAssets.length}件3C资产` : "发现1件优先换新资产"}</h2>
         </div>
         <span className="match-confidence"><SafetyCertificateOutlined /> 中等置信度</span>
       </div>
-      <p className="match-explanation">已匹配你在2024年购买的 {asset.model}，型号和配置无需重新填写。</p>
+      <p className="match-explanation">已从历史订单自动带入型号、配置和购买时间，可添加手机、平板和耳机组合抵扣。</p>
 
       <div className="suggested-asset">
         <span className={applied ? "asset-selector active" : "asset-selector"}>{applied ? <CheckOutlined /> : null}</span>
-        <img src={asset.image} alt={asset.model} />
-        <div>
-          <strong>{asset.model}</strong>
-          <span>{asset.color}｜{asset.storage}</span>
-          <small>外观良好 · 功能正常</small>
+        <div className="asset-stack">
+          {selectedAssets.map((asset) => <img key={asset.id} src={asset.image} alt={asset.model} />)}
         </div>
-        <button className="text-action" onClick={() => navigate("/assets")}>更换设备 <RightOutlined /></button>
+        <div>
+          <strong>{selectedAssets.length === 1 ? selectedAssets[0].model : `${selectedAssets.length}件3C资产组合抵扣`}</strong>
+          <span>今日预计合计 ¥{formatMoney(plan.assetValueToday)}</span>
+          <small>90天预计合计少值 ¥{formatMoney(plan.delayLoss90)}</small>
+        </div>
+        <button className="text-action" onClick={() => navigate("/assets")}>调整资产 <RightOutlined /></button>
       </div>
 
       <div className="timing-compare">
@@ -44,8 +56,8 @@ export function RenewalRecommendation({ applied, plan, onRemove }: { applied: bo
 
       <div className="price-formula" aria-label="今日换新金额明细">
         <div><span>新平板</span><strong>¥{formatMoney(plan.tabletPrice)}</strong></div>
-        <div><span>旧机预计抵扣</span><strong className="deduction">-¥{formatMoney(demoQuote.estimateMax)}</strong></div>
-        <div><span>换新补贴</span><strong className="deduction">-¥{formatMoney(demoQuote.tradeInBonus)}</strong></div>
+        <div><span>{selectedAssets.length}件3C资产预计回收</span><strong className="deduction">-¥{formatMoney(plan.assetValueToday)}</strong></div>
+        <div><span>换新补贴（单次）</span><strong className="deduction">-¥{formatMoney(plan.tradeInBonus)}</strong></div>
         <div className="formula-total"><span>今天平板换新再付</span><strong>¥{formatMoney(plan.netTabletToday)}</strong></div>
       </div>
 
@@ -58,8 +70,8 @@ export function RenewalRecommendation({ applied, plan, onRemove }: { applied: bo
         </div>
       ) : (
         <div className="recommendation-actions">
-          <button className="secondary-button" onClick={() => navigate("/diagnosis")}>查看依据</button>
-          <button className="primary-button" onClick={() => navigate("/diagnosis")}>测算并抵扣</button>
+          <button className="secondary-button" onClick={() => navigate(hasSelection ? "/diagnosis" : "/assets")}>查看依据</button>
+          <button className="primary-button" onClick={() => navigate("/assets")}>选择资产并测算</button>
         </div>
       )}
     </section>

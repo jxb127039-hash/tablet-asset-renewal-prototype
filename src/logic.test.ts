@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cartItems, demoQuote, purchasedAssets } from "./data";
+import { cartItems, purchasedAssets, TRADE_IN_BONUS } from "./data";
 import { calculateUpgradePlan, rankEligibleAssets, shouldShowContextRecommendation } from "./logic";
 
 describe("asset matching", () => {
@@ -16,7 +16,7 @@ describe("asset matching", () => {
 
 describe("upgrade arithmetic", () => {
   it("keeps future depreciation out of today's discount", () => {
-    const plan = calculateUpgradePlan(cartItems, purchasedAssets[0], demoQuote);
+    const plan = calculateUpgradePlan(cartItems, [purchasedAssets[0]], TRADE_IN_BONUS);
     expect(plan.cartTotal).toBe(4498);
     expect(plan.currentOffset).toBe(1580);
     expect(plan.netTabletToday).toBe(2319);
@@ -26,16 +26,23 @@ describe("upgrade arithmetic", () => {
   });
 
   it("never returns a negative payable amount", () => {
-    const plan = calculateUpgradePlan(cartItems, purchasedAssets[0], {
-      ...demoQuote,
-      estimateMax: 99999,
-      tradeInBonus: 99999,
-    });
+    const plan = calculateUpgradePlan(cartItems, [{ ...purchasedAssets[0], estimateMax: 99999 }], 99999);
     expect(plan.netTabletToday).toBe(0);
     expect(plan.cartPayableToday).toBe(0);
   });
 
   it("rejects carts without a selected tablet", () => {
-    expect(() => calculateUpgradePlan(cartItems.map((item) => ({ ...item, selected: false })), purchasedAssets[0], demoQuote)).toThrow();
+    expect(() => calculateUpgradePlan(cartItems.map((item) => ({ ...item, selected: false })), [purchasedAssets[0]], TRADE_IN_BONUS)).toThrow();
+  });
+
+  it("aggregates multiple assets but applies the trade-in bonus once", () => {
+    const plan = calculateUpgradePlan(cartItems, purchasedAssets, TRADE_IN_BONUS);
+    expect(plan.assetValueToday).toBe(3600);
+    expect(plan.tradeInBonus).toBe(200);
+    expect(plan.currentOffset).toBe(3800);
+    expect(plan.netTabletToday).toBe(99);
+    expect(plan.cartPayableToday).toBe(698);
+    expect(plan.delayLoss90).toBe(550);
+    expect(plan.netTablet90).toBe(649);
   });
 });

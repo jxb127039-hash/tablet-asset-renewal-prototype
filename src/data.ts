@@ -1,4 +1,6 @@
-import type { CartItem, PurchasedAsset, ResaleQuote } from "./types";
+import type { CartItem, PurchasedAsset } from "./types";
+
+export const TRADE_IN_BONUS = 200;
 
 export const purchasedAssets: PurchasedAsset[] = [
   {
@@ -14,23 +16,46 @@ export const purchasedAssets: PurchasedAsset[] = [
     ecosystem: "vivo-iqoo",
     estimateMin: 1180,
     estimateMax: 1380,
+    forecast30: 1320,
+    forecast60: 1260,
     forecast90: 1200,
     image: "./assets/iqoo-pad2-pro.png",
   },
   {
-    id: "iqoo-pad-air",
-    category: "tablet",
+    id: "iqoo-11-phone",
+    category: "phone",
     brand: "iQOO",
-    model: "iQOO Pad Air",
-    storage: "8GB+256GB",
-    color: "星钻白",
-    purchasedAt: "2023-09-15",
-    paidPrice: 2499,
+    model: "iQOO 11",
+    storage: "12GB+256GB",
+    color: "赛道版",
+    purchasedAt: "2023-02-18",
+    paidPrice: 4399,
     status: "active",
     ecosystem: "vivo-iqoo",
     estimateMin: 620,
-    estimateMax: 780,
-    forecast90: 680,
+    estimateMax: 760,
+    forecast30: 710,
+    forecast60: 660,
+    forecast90: 610,
+    image: "./assets/iqoo-11-phone.png",
+  },
+  {
+    id: "vivo-tws4",
+    category: "earbuds",
+    brand: "vivo",
+    model: "vivo TWS 4",
+    storage: "标准版",
+    color: "千峰白",
+    purchasedAt: "2024-04-03",
+    paidPrice: 399,
+    status: "active",
+    ecosystem: "vivo-iqoo",
+    estimateMin: 120,
+    estimateMax: 180,
+    forecast30: 160,
+    forecast60: 145,
+    forecast90: 130,
+    image: "./assets/vivo-tws4.png",
   },
   {
     id: "vivo-pad3-pro",
@@ -45,7 +70,10 @@ export const purchasedAssets: PurchasedAsset[] = [
     ecosystem: "vivo-iqoo",
     estimateMin: 1080,
     estimateMax: 1280,
+    forecast30: 1220,
+    forecast60: 1160,
     forecast90: 1110,
+    image: "./assets/vivo-pad3-pro.png",
   },
 ];
 
@@ -73,14 +101,3 @@ export const cartItems: CartItem[] = [
     image: "./assets/iqoo-keyboard.png",
   },
 ];
-
-export const demoQuote: ResaleQuote = {
-  assetId: "iqoo-pad2-pro",
-  estimateMin: 1180,
-  estimateMax: 1380,
-  forecast30: 1320,
-  forecast90: 1200,
-  tradeInBonus: 200,
-  confidence: "medium",
-  asOf: "2026-06-29",
-};

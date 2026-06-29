@@ -4,30 +4,34 @@ import { useNavigate } from "react-router-dom";
 import { RenewalRecommendation } from "../components/RenewalRecommendation";
 import { ProductRow } from "../components/ProductRow";
 import { SelectMark, Shell } from "../components/Shell";
-import { cartItems, demoQuote, purchasedAssets } from "../data";
+import { cartItems, purchasedAssets, TRADE_IN_BONUS } from "../data";
 import { exportEvents, recordEvent } from "../events";
-import { calculateUpgradePlan, formatMoney, shouldShowContextRecommendation } from "../logic";
-import { isTradeInApplied, setTradeInApplied } from "../store";
+import { calculateUpgradePlan, formatMoney, rankEligibleAssets, shouldShowContextRecommendation } from "../logic";
+import { getSelectedAssetIds, isTradeInApplied, setTradeInApplied } from "../store";
 
 export function CartPage() {
   const navigate = useNavigate();
   const [applied, setApplied] = useState(isTradeInApplied());
   const [items, setItems] = useState(() => cartItems.map((item) => ({ ...item })));
+  const selectedAssetIds = getSelectedAssetIds();
+  const selectedAssets = purchasedAssets.filter((asset) => selectedAssetIds.includes(asset.id));
+  const suggestedAsset = rankEligibleAssets(purchasedAssets, cartItems[0])[0];
+  const displayAssets = selectedAssets.length ? selectedAssets : [suggestedAsset];
   const hasSelectedTablet = items.some((item) => item.selected && item.category === "tablet");
   const plan = useMemo(
-    () => calculateUpgradePlan(hasSelectedTablet ? items : cartItems, purchasedAssets[0], demoQuote),
-    [hasSelectedTablet, items],
+    () => calculateUpgradePlan(hasSelectedTablet ? items : cartItems, displayAssets, TRADE_IN_BONUS),
+    [hasSelectedTablet, items, displayAssets],
   );
   const showRecommendation = shouldShowContextRecommendation(items, purchasedAssets);
 
   useEffect(() => {
     recordEvent("cart_asset_entry_impression");
-    if (showRecommendation) recordEvent("context_recommendation_impression", { assetId: purchasedAssets[0].id, cartItemId: cartItems[0].id });
+    if (showRecommendation) recordEvent("context_recommendation_impression", { assetId: selectedAssetIds.join(","), cartItemId: cartItems[0].id });
   }, [showRecommendation]);
 
   const checkout = () => {
     recordEvent(applied ? "tradein_checkout_completed" : "regular_checkout_started", {
-      assetId: applied ? purchasedAssets[0].id : undefined,
+      assetId: applied ? selectedAssetIds.join(",") : undefined,
       cartItemId: items[0].id,
     });
     navigate(applied ? "/success" : "/success?mode=regular");
@@ -70,7 +74,7 @@ export function CartPage() {
         }}
       >
         <span className="asset-entry-icon"><ShoppingCartOutlined /></span>
-        <span><strong>我的3C已购资产</strong><small>3件可估值 · 自动匹配购物车</small></span>
+        <span><strong>我的3C已购资产</strong><small>{selectedAssets.length ? `已选${selectedAssets.length}件 · 预计抵扣¥${formatMoney(plan.currentOffset)}` : `${purchasedAssets.length}件可选 · 支持跨品类组合抵扣`}</small></span>
         <RightOutlined />
       </button>
 
@@ -89,6 +93,8 @@ export function CartPage() {
         <RenewalRecommendation
           applied={applied}
           plan={plan}
+          selectedAssets={displayAssets}
+          hasSelection={Boolean(selectedAssets.length)}
           onRemove={() => {
             setTradeInApplied(false);
             setApplied(false);
